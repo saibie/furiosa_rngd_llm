@@ -1,0 +1,9 @@
+.vscode
+Llama-3.3-70B-Instruct-FP8
+not_CJ_llama_for_npu
+quantized_not_CJ_llama_for_npu
+quantized_original_llama
+npu_artifact_from_quantized
+llm_env
+*PG*.*py*
+*.log

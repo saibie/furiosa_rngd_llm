@@ -1,0 +1,3 @@
+furiosa-llm
+huggingface_hub[cli]
+zstandard
