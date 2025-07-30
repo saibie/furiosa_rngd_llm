@@ -1,3 +1,5 @@
+This project was built using the Gemini CLI—even this README.md file.
+
 <details open>
 <summary>한국어 설명 보기/숨기기</summary>
 
