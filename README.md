@@ -9,6 +9,8 @@
 
 빌드 과정을 실행하기 전에, 필요한 의존성 패키지들이 설치되어 있는지 확인해야 합니다. 주 요구사항은 `requirements.txt`에 명시되어 있으며, 환경에 따라 `furiosa_requirements.txt`의 패키지도 설치해야 할 수 있습니다.
 
+이 프로젝트는 FuriosaAI의 Renegade 칩 2개를 사용하는 환경을 기준으로 합니다.
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -59,6 +61,8 @@ This project contains scripts to convert and build a quantized NPU artifact for 
 ## Prerequisites
 
 Before running the build process, ensure you have the necessary dependencies installed. The primary requirements are listed in `requirements.txt`. Depending on your setup, you may also need to install packages from `furiosa_requirements.txt`.
+
+Additionally, this project is based on an environment using two Renegade chips from FuriosaAI.
 
 ```bash
 pip install -r requirements.txt
