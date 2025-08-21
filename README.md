@@ -25,14 +25,25 @@ pip install -r requirements.txt
 
 ### 1단계: 양자화된 모델 생성
 
-이 스크립트는 베이스 모델(`meta-llama/Llama-3.3-70B-Instruct`)을 로드하고, SDK를 실시간으로 수정(몽키패칭)하여 커스텀 토큰 금지 로직을 적용한 뒤, 모델을 양자화합니다.
+이 스크립트는 베이스 모델(`meta-llama/Llama-3.3-70B-Instruct`)을 로드하고, SDK를 실시간으로 수정(몽키패칭)하여 커스텀 로직을 적용한 뒤, 모델을 양자화합니다.
 
-스크립트 실행:
+#### 커스텀 로직 상세:
+1.  **토큰 금지**: `banned_tokens.txt` 파일에 명시된 토큰 ID들의 로짓(logit)을 최소값으로 설정하여 해당 토큰이 생성되지 않도록 합니다.
+2.  **토큰 증폭**: `amplified_tokens.txt` 파일에 명시된 토큰 ID들의 로짓에 특정 계수(factor)를 곱하여 해당 토큰의 생성 확률을 높입니다.
+
+#### 스크립트 실행:
 ```bash
+# 기본값(증폭 계수 5.0)으로 실행
 python run_custom_quantization.py
+
+# 증폭 계수를 10.0으로 지정하여 실행
+python run_custom_quantization.py --amplification_factor 10.0
 ```
 
--   **입력**: Hugging Face의 `meta-llama/Llama-3.3-70B-Instruct` 모델 및 로컬의 `banned_tokens.txt` 파일.
+-   **입력**: 
+    -   Hugging Face의 `meta-llama/Llama-3.3-70B-Instruct` 모델.
+    -   `banned_tokens.txt`: 금지할 토큰 ID 목록 (쉼표로 구분).
+    -   (선택 사항) `amplified_tokens.txt`: 증폭할 토큰 ID 목록 (쉼표로 구분).
 -   **출력**: `./quantized_not_CJ_llama_for_npu` 디렉터리에 저장되는 양자화된 모델.
 
 ### 2단계: 최종 NPU 아티팩트 빌드
