@@ -69,13 +69,13 @@ python build_from_quantized.py
 
 # LLM NPU Artifact Builder
 
-This project contains scripts to convert and build a quantized NPU artifact for a large language model (LLM) with custom token banning logic.
+This project contains scripts to quantize a large language model (LLM) with custom logic and build it into an NPU artifact.
 
 ## Prerequisites
 
 Before running the build process, ensure you have the necessary dependencies installed. The primary requirements are listed in `requirements.txt`. Depending on your setup, you may also need to install packages from `furiosa_requirements.txt`.
 
-Additionally, this project is based on an environment using two Renegade chips from FuriosaAI.
+This project is based on an environment using two Renegade chips from FuriosaAI.
 
 ```bash
 pip install -r requirements.txt
@@ -89,14 +89,25 @@ The process to create the final NPU artifact involves two main steps.
 
 ### Step 1: Create the Quantized Model
 
-This script loads the base model (`meta-llama/Llama-3.3-70B-Instruct`), applies the custom token banning logic via monkey-patching the SDK, and then quantizes the model.
+This script loads the base model (`meta-llama/Llama-3.3-70B-Instruct`), applies custom logic by monkey-patching the SDK, and then quantizes the model.
 
-Execute the script:
+#### Custom Logic Details:
+1.  **Token Banning**: Sets the logits of token IDs specified in `banned_tokens.txt` to the minimum value to prevent them from being generated.
+2.  **Token Amplification**: Multiplies the logits of token IDs specified in `amplified_tokens.txt` by a specific factor to increase their generation probability.
+
+#### Execute the script:
 ```bash
+# Run with default amplification factor (5.0)
 python run_custom_quantization.py
+
+# Run with a specific amplification factor of 10.0
+python run_custom_quantization.py --amplification_factor 10.0
 ```
 
--   **Input**: `meta-llama/Llama-3.3-70B-Instruct` from Hugging Face and the local `banned_tokens.txt`.
+-   **Input**: 
+    -   `meta-llama/Llama-3.3-70B-Instruct` model from Hugging Face.
+    -   `banned_tokens.txt`: A comma-separated list of token IDs to ban.
+    -   (Optional) `amplified_tokens.txt`: A comma-separated list of token IDs to amplify.
 -   **Output**: A quantized model saved in the `./quantized_not_CJ_llama_for_npu` directory.
 
 ### Step 2: Build the Final NPU Artifact

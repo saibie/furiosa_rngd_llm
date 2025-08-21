@@ -55,7 +55,7 @@ def main():
     parser.add_argument(
         "--model_path",
         type=str,
-        default="./Llama-3.3-70B-Instruct-FP8",
+        default="meta-llama/Llama-3.3-70B-Instruct",
         help="Path to the Hugging Face model or tokenizer.",
     )
     parser.add_argument(
