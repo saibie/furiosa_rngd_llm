@@ -2,6 +2,11 @@ import os
 import torch
 from typing import Optional, List
 import shutil
+import argparse
+
+# --- 증폭 계수 전역 변수 ---
+# main 함수에서 커맨드 라인 인자로 받은 값으로 덮어쓰게 됩니다.
+amplification_factor = 1.0
 
 # --- 1. SDK 및 커스텀 로직에 필요한 모든 클래스 임포트 ---
 try:
@@ -20,6 +25,19 @@ with open(banned_tokens_file, 'r', encoding='utf-8') as f:
     banned_token_ids = [int(x.strip()) for x in banned_tokens_str.split(',')]
 
 print(f"총 {len(banned_token_ids)}개의 토큰을 금지하도록 설정을 준비합니다.")
+
+
+# --- 추가: 증폭할 토큰 ID 로드 (파일이 없으면 건너뜀) ---
+amplified_tokens_file = "amplified_tokens.txt"
+amplified_token_ids = []
+try:
+    with open(amplified_tokens_file, 'r', encoding='utf-8') as f:
+        amplified_tokens_str = f.read().replace('[', '').replace(']', '')
+        if amplified_tokens_str.strip():
+            amplified_token_ids = [int(x.strip()) for x in amplified_tokens_str.split(',')]
+    print(f"총 {len(amplified_token_ids)}개의 토큰을 증폭하도록 설정을 준비합니다.")
+except FileNotFoundError:
+    print(f"'{amplified_tokens_file}' 파일이 없어 토큰 증폭을 건너뜁니다.")
 
 
 # --- 3. ⭐️⭐️⭐️ SDK 클래스를 실시간으로 수정 (몽키 패칭) ⭐️⭐️⭐️ ---
@@ -57,6 +75,12 @@ def patched_forward(
     logits = outputs.logits
     if banned_token_ids:
         logits[:, :, banned_token_ids] = torch.finfo(logits.dtype).min
+
+    # amplified_tokens.txt에 지정된 토큰의 logit을 5배 증폭시킵니다.
+    if amplified_token_ids:
+        # 오버플로우를 방지하기 위해 dtype의 최대값으로 클램핑합니다.
+        dtype_max = torch.finfo(logits.dtype).max
+        logits[:, :, amplified_token_ids] = torch.clamp(logits[:, :, amplified_token_ids] * amplification_factor, max=dtype_max)
     
     # 수정된 결과를 담아 반환합니다.
     outputs.logits = logits
@@ -69,6 +93,19 @@ print("SDK의 LlamaForCausalLM 클래스에 커스텀 로직을 성공적으로 
 
 # --- 4. 메인 양자화 실행 로직 ---
 def main():
+    global amplification_factor
+
+    parser = argparse.ArgumentParser(description="커스텀 로직을 주입하여 모델을 양자화합니다.")
+    parser.add_argument(
+        "--amplification_factor",
+        type=float,
+        default=5.0,
+        help="amplified_tokens.txt에 지정된 토큰의 로짓에 곱할 증폭 계수입니다."
+    )
+    args = parser.parse_args()
+    amplification_factor = args.amplification_factor
+    print(f"로짓 증폭 계수: {amplification_factor}")
+
     # 이제 순정 모델 ID를 그대로 사용합니다.
     model_id = "meta-llama/Llama-3.3-70B-Instruct"
     
