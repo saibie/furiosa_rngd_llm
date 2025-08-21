@@ -17,7 +17,8 @@ This project was built using the Gemini CLI—even this README.md file.
 pip install -r requirements.txt
 ```
 
-또한, 프로젝트의 루트 디렉터리에 `banned_tokens.txt` 파일이 필요합니다. 이 파일은 모델의 출력에서 제외할 토큰 ID들을 쉼표로 구분하여 포함해야 합니다.
+또한, 프로젝트의 루트 디렉터리에 `amplified_tokens.txt`와 `banned_tokens.txt` 파일이 필요합니다. 이 파일은 모델의 출력에서 확률을 증폭하거나 제외할 토큰 ID들을 쉼표로 구분하여 포함해야 합니다.
+`python create_banned_tokens.py`를 실행함으로써 한국어 토큰을 증폭하고 중국어·일본어 토큰을 제외할 수 있습니다.
 
 ## 빌드 과정
 
@@ -81,7 +82,9 @@ This project is based on an environment using two Renegade chips from FuriosaAI.
 pip install -r requirements.txt
 ```
 
-You also need to have a `banned_tokens.txt` file in the root directory. This file should contain a comma-separated list of token IDs to be excluded from the model's output.
+Additionally, you need amplified_tokens.txt and banned_tokens.txt files in the project's root directory. These files should contain comma-separated lists of token IDs to either increase the probability of or exclude from the model's output.
+
+You can run `python create_banned_tokens.py` to automatically generate these files. This script will populate the files to amplify Korean tokens while banning Chinese and Japanese tokens.
 
 ## Build Process
 
