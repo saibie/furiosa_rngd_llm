@@ -17,7 +17,7 @@ This project was built using the Gemini CLI—even this README.md file.
 pip install -r requirements.txt
 ```
 
-또한, 프로젝트의 루트 디렉터리에 `amplified_tokens.txt`와 `banned_tokens.txt` 파일이 필요합니다. 이 파일은 모델의 출력에서 확률을 증폭하거나 제외할 토큰 ID들을 쉼표로 구분하여 포함해야 합니다.
+또한, 프로젝트의 루트 디렉터리에 `amplified_tokens.txt`와 `banned_tokens.txt` 파일이 필요합니다. 이 파일은 모델의 출력에서 확률을 증폭하거나 제외할 토큰 ID들이 파이썬 리스트 형태의 문자열(예: `[123, 456, 789]`)로 저장되어야 합니다.
 `python create_banned_tokens.py`를 실행함으로써 한국어 토큰을 증폭하고 중국어·일본어 토큰을 제외할 수 있습니다.
 
 ## 빌드 과정
@@ -43,8 +43,8 @@ python run_custom_quantization.py --amplification_factor 10.0
 
 -   **입력**: 
     -   Hugging Face의 `meta-llama/Llama-3.3-70B-Instruct` 모델.
-    -   `banned_tokens.txt`: 금지할 토큰 ID 목록 (쉼표로 구분).
-    -   (선택 사항) `amplified_tokens.txt`: 증폭할 토큰 ID 목록 (쉼표로 구분).
+    -   `banned_tokens.txt`: 금지할 토큰 ID 목록 (리스트 형태의 문자열).
+    -   (선택 사항) `amplified_tokens.txt`: 증폭할 토큰 ID 목록 (리스트 형태의 문자열).
 -   **출력**: `./quantized_not_CJ_llama_for_npu` 디렉터리에 저장되는 양자화된 모델.
 
 ### 2단계: 최종 NPU 아티팩트 빌드
@@ -82,7 +82,7 @@ This project is based on an environment using two Renegade chips from FuriosaAI.
 pip install -r requirements.txt
 ```
 
-Additionally, you need amplified_tokens.txt and banned_tokens.txt files in the project's root directory. These files should contain comma-separated lists of token IDs to either increase the probability of or exclude from the model's output.
+Additionally, you need amplified_tokens.txt and banned_tokens.txt files in the project's root directory. These files should contain a Python list of token IDs saved as a string (e.g., `[123, 456, 789]`).
 
 You can run `python create_banned_tokens.py` to automatically generate these files. This script will populate the files to amplify Korean tokens while banning Chinese and Japanese tokens.
 
@@ -109,8 +109,8 @@ python run_custom_quantization.py --amplification_factor 10.0
 
 -   **Input**: 
     -   `meta-llama/Llama-3.3-70B-Instruct` model from Hugging Face.
-    -   `banned_tokens.txt`: A comma-separated list of token IDs to ban.
-    -   (Optional) `amplified_tokens.txt`: A comma-separated list of token IDs to amplify.
+    -   `banned_tokens.txt`: A string representation of a Python list of token IDs to ban.
+    -   (Optional) `amplified_tokens.txt`: A string representation of a Python list of token IDs to amplify.
 -   **Output**: A quantized model saved in the `./quantized_not_CJ_llama_for_npu` directory.
 
 ### Step 2: Build the Final NPU Artifact

@@ -77,7 +77,7 @@ def patched_forward(
         logits[:, :, banned_token_ids] = torch.finfo(logits.dtype).min
 
     # amplified_tokens.txt에 지정된 토큰의 logit을 5배 증폭시킵니다.
-    if amplified_token_ids:
+    if amplified_token_ids and amplification_factor != 1.0:
         # 오버플로우를 방지하기 위해 dtype의 최대값으로 클램핑합니다.
         dtype_max = torch.finfo(logits.dtype).max
         logits[:, :, amplified_token_ids] = torch.clamp(logits[:, :, amplified_token_ids] * amplification_factor, max=dtype_max)
